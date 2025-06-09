@@ -20,48 +20,55 @@
     left: 20px;
     background: rgba(0, 0, 0, 0.8);
     padding: 10px 15px;
-    border: 1px solid #0f0;
+    border: 1px solid currentColor;
     font-size: 14px;
     max-width: 300px;
     min-height: 30px;
     white-space: nowrap;
+    color: inherit;
   }
   #scanBox {
     position: fixed;
     top: 20px;
     left: 20px;
     background: rgba(0,0,0,0.9);
-    color: #0f0;
+    color: inherit;
     font-family: monospace;
     font-size: 18px;
     padding: 15px;
-    border: 2px solid #0f0;
+    border: 2px solid currentColor;
     width: 320px;
     min-height: 50px;
     white-space: pre-line;
   }
-  #scanButton {
+  button {
     position: fixed;
-    top: 90px;
-    left: 20px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    background: #0f0;
+    background: currentColor;
     border: none;
     color: black;
     font-weight: bold;
     font-family: monospace;
   }
+  #scanButton {
+    top: 90px;
+    left: 20px;
+  }
+  #colorButton {
+    top: 90px;
+    left: 360px;
+  }
+  #aboutButton {
+    top: 90px;
+    left: 520px;
+  }
   #scanButton:disabled {
     background: gray;
     cursor: not-allowed;
+    color: #333;
   }
-
-  .red-text {
-    color: red !important;
-  }
-
   /* Spinner style */
   @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -76,53 +83,93 @@
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
   }
+
+  /* About popup */
+  #aboutOverlay {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    top: 0; left: 0; right:0; bottom:0;
+    background: rgba(0,0,0,0.85);
+    color: #0f0;
+    font-family: monospace;
+    padding: 30px;
+  }
+  #aboutContent {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #111;
+    border: 2px solid #0f0;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+  }
+  #aboutContent img {
+    width: 150px;
+    margin-top: 20px;
+  }
+  #aboutClose {
+    margin-top: 20px;
+    background: #0f0;
+    color: black;
+    border: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
 <canvas id="matrix"></canvas>
 <div id="messageBox"></div>
 
-<!-- Virus scan display -->
 <div id="scanBox"></div>
+
 <button id="scanButton">Start Virus Scan</button>
+<button id="colorButton">Change Color</button>
+<button id="aboutButton">About</button>
+
+<!-- About Popup -->
+<div id="aboutOverlay">
+  <div id="aboutContent">
+    <h2>About AccessDenied</h2>
+    <p>This creepy matrix rain website shows hacker messages, a fake virus scan, and a shutdown screen — perfect for trolling your friends! 😈</p>
+    <img src="https://c.tenor.com/qTU_8jv-78sAAAAC/catjam-cat-jam.gif" alt="Catjam Meme" />
+    <br />
+    <button id="aboutClose">Close</button>
+  </div>
+</div>
 
 <script>
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
 const fontSize = 16;
 const columns = Math.floor(canvas.width / fontSize);
-
 const drops = [];
 for (let x = 0; x < columns; x++) drops[x] = 1;
+
+let currentColor = '#0f0'; // start green
+const colors = ['#0f0', 'red', 'yellow', 'cyan', 'magenta', 'white'];
 
 function draw() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = '#0F0'; // green text
+  ctx.fillStyle = currentColor;
   ctx.font = fontSize + 'px monospace';
-
   for (let i = 0; i < drops.length; i++) {
     const text = letters.charAt(Math.floor(Math.random() * letters.length));
     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-      drops[i] = 0;
-    }
-
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
     drops[i]++;
   }
 }
-
 setInterval(draw, 50);
 
 // Creepy hacker messages
-
 const messages = [
   'Look behind you',
   'You are reported by the FBI',
@@ -140,116 +187,6 @@ const messages = [
   'USER AUTHENTICATION FAILED',
   'PASSWORD CRACKED',
 ];
-
 const messageBox = document.getElementById('messageBox');
 let msgIndex = 0;
-const typingSpeed = 100; // ms per letter
-
-function typeMessage(message, callback) {
-  let i = 0;
-  messageBox.textContent = '';
-  function typing() {
-    if (i < message.length) {
-      messageBox.textContent += message.charAt(i);
-      i++;
-      setTimeout(typing, typingSpeed);
-    } else {
-      if (callback) callback();
-    }
-  }
-  typing();
-}
-
-function showNextMessage() {
-  typeMessage(messages[msgIndex], () => {
-    // Wait 7 seconds after typing finishes, then show next message
-    setTimeout(() => {
-      msgIndex = (msgIndex + 1) % messages.length;
-      showNextMessage();
-    }, 7000);
-  });
-}
-
-// Start showing messages
-showNextMessage();
-
-// Resize canvas on window resize
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-
-// === Fake Virus Scan ===
-
-const scanMessages = [
-  "Initializing virus scan...",
-  "Scanning system files...",
-  "Scanning registry...",
-  "Checking network connections...",
-  "Detecting malware signatures...",
-  "Scanning running processes...",
-  "Quarantining threats...",
-  "System integrity check...",
-  "Removing suspicious files...",
-  "Finalizing scan...",
-  "System compromised! 💀"
-];
-
-const scanBox = document.getElementById('scanBox');
-const scanButton = document.getElementById('scanButton');
-
-scanButton.addEventListener('click', () => {
-  scanButton.disabled = true;
-  let index = 0;
-  scanBox.textContent = '';
-
-  const scanInterval = setInterval(() => {
-    if (index < scanMessages.length) {
-      scanBox.textContent = scanMessages[index];
-    } else {
-      scanBox.classList.add('red-text');
-      clearInterval(scanInterval);
-
-      // Show shutdown screen after 3 seconds
-      setTimeout(() => {
-        showShutdownScreen();
-      }, 3000);
-    }
-    index++;
-  }, 2000); // 2 seconds per message
-});
-
-// === Windows 10 style shutdown screen with spinner ===
-
-function showShutdownScreen() {
-  const shutdownOverlay = document.createElement('div');
-  shutdownOverlay.style.position = 'fixed';
-  shutdownOverlay.style.top = '0';
-  shutdownOverlay.style.left = '0';
-  shutdownOverlay.style.width = '100vw';
-  shutdownOverlay.style.height = '100vh';
-  shutdownOverlay.style.background = '#000066';
-  shutdownOverlay.style.color = 'white';
-  shutdownOverlay.style.display = 'flex';
-  shutdownOverlay.style.flexDirection = 'column';
-  shutdownOverlay.style.justifyContent = 'center';
-  shutdownOverlay.style.alignItems = 'center';
-  shutdownOverlay.style.fontSize = '24px';
-  shutdownOverlay.style.zIndex = '9999';
-
-  // Spinner div
-  const spinner = document.createElement('div');
-  spinner.classList.add('spinner');
-
-  // Message div
-  const message = document.createElement('div');
-  message.textContent = 'Shutting down...';
-
-  shutdownOverlay.appendChild(spinner);
-  shutdownOverlay.appendChild(message);
-
-  document.body.appendChild(shutdownOverlay);
-}
-</script>
-</body>
-</html>
+const typing
