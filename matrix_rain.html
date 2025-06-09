@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Creepy Matrix Rain</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    color: #0f0;
+    font-family: monospace;
+  }
+
+  canvas {
+    display: block;
+  }
+
+  #messageBox {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 15px;
+    border: 1px solid #0f0;
+    font-size: 14px;
+    max-width: 300px;
+    min-height: 30px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .flash {
+    animation: flashRed 0.5s ease-in-out 3;
+  }
+
+  @keyframes flashRed {
+    0%, 100% { color: #0f0; border-color: #0f0; }
+    50% { color: red; border-color: red; }
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div id="messageBox"></div>
+
+<script>
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+
+const drops = [];
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function draw() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#0F0';
+  ctx.font = fontSize + 'px monospace';
+
+  for (let i = 0; i < drops.length; i++) {
+    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+
+    drops[i]++;
+  }
+}
+
+setInterval(draw, 50);
+
+// Creepy hacker messages
+const messages = [
+  'Look behind you',
+  'You are reported by the FBI',
+  'A hacker has got in your computer and hacked it.',
+  'ACCESS GRANTED',
+  'ACCESS DENIED',
+  'INTRUSION DETECTED',
+  'SECURITY BREACH',
+  'SYSTEM OVERRIDE',
+  'ENCRYPTION BYPASSED',
+  'MALWARE INSTALLED',
+  'ROOT ACCESS ACQUIRED',
+  'FIREWALL DISABLED',
+  'DATA EXFILTRATION IN PROGRESS',
+  'USER AUTHENTICATION FAILED',
+  'PASSWORD CRACKED',
+];
+
+const messageBox = document.getElementById('messageBox');
+let msgIndex = 0;
+const typingSpeed = 100;
+
+function typeMessage(message, callback) {
+  let i = 0;
+  messageBox.classList.remove('flash');
+  void messageBox.offsetWidth; // trigger reflow
+  messageBox.classList.add('flash');
+  messageBox.textContent = '';
+
+  function typing() {
+    if (i < message.length) {
+      messageBox.textContent += message.charAt(i);
+      i++;
+      setTimeout(typing, typingSpeed);
+    } else {
+      if (callback) callback();
+    }
+  }
+
+  typing();
+}
+
+function showNextMessage() {
+  typeMessage(messages[msgIndex], () => {
+    setTimeout(() => {
+      msgIndex = (msgIndex + 1) % messages.length;
+      showNextMessage();
+    }, 7000);
+  });
+}
+
+showNextMessage();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
