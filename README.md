@@ -23,8 +23,7 @@ Warning:
 This project is for educational and prank purposes only. Don't use it for malicious activities.
 
 Files:
-matrix_rain.html — main prank code
-serve_matrix.py — lightweight local server
+index.html — main prank code
 README.md — this file
 
 This website will get more updates soon! 
