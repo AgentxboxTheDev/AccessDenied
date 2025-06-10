@@ -6,9 +6,9 @@
 <style>
   body {
     margin: 0;
-    background: black;
+    background: #001100;
     overflow: hidden;
-    color: #0f0;
+    color: #00FF00;
     font-family: monospace;
   }
   canvas {
@@ -25,140 +25,110 @@
     max-width: 300px;
     min-height: 30px;
     white-space: nowrap;
-    color: inherit;
+    color: currentColor;
+  }
+  a#aboutBtn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    color: currentColor;
+    font-family: monospace;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 10;
+  }
+  #colorButton, #scanButton {
+    position: fixed;
+    top: 10px;
+    background: transparent;
+    border: 1px solid currentColor;
+    color: currentColor;
+    font-family: monospace;
+    padding: 5px 10px;
+    cursor: pointer;
+    z-index: 10;
+    user-select: none;
+  }
+  #colorButton:hover, #scanButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  #scanButton {
+    right: 130px;
+  }
+  #colorButton {
+    right: 10px;
   }
   #scanBox {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(0,0,0,0.9);
-    color: inherit;
-    font-family: monospace;
-    font-size: 18px;
-    padding: 15px;
-    border: 2px solid currentColor;
+    top: 50px;
+    right: 10px;
     width: 320px;
-    min-height: 50px;
+    background: rgba(0,0,0,0.8);
+    color: currentColor;
+    font-family: monospace;
+    padding: 10px;
+    border: 1px solid currentColor;
+    max-height: 150px;
+    overflow-y: auto;
     white-space: pre-line;
-  }
-  button {
-    position: fixed;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background: currentColor;
-    border: none;
-    color: black;
-    font-weight: bold;
-    font-family: monospace;
-  }
-  #scanButton {
-    top: 90px;
-    left: 20px;
-  }
-  #colorButton {
-    top: 90px;
-    left: 360px;
-  }
-  #aboutButton {
-    top: 90px;
-    left: 520px;
-  }
-  #scanButton:disabled {
-    background: gray;
-    cursor: not-allowed;
-    color: #333;
-  }
-  /* Spinner style */
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  .spinner {
-    border: 8px solid #ccc;
-    border-top: 8px solid white;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
-
-  /* About popup */
-  #aboutOverlay {
+    z-index: 10;
     display: none;
+  }
+  #heartMonitor {
     position: fixed;
-    z-index: 10000;
-    top: 0; left: 0; right:0; bottom:0;
-    background: rgba(0,0,0,0.85);
-    color: #0f0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    color: #00FF00;
     font-family: monospace;
-    padding: 30px;
-  }
-  #aboutContent {
-    max-width: 600px;
-    margin: 40px auto;
-    background: #111;
-    border: 2px solid #0f0;
+    font-size: 24px;
     padding: 20px;
+    border: 2px solid #00FF00;
+    z-index: 9999;
+    display: none;
     text-align: center;
-    border-radius: 10px;
+    animation: pulse 0.8s infinite;
   }
-  #aboutContent img {
-    width: 150px;
-    margin-top: 20px;
-  }
-  #aboutClose {
-    margin-top: 20px;
-    background: #0f0;
-    color: black;
-    border: none;
-    font-weight: bold;
-    padding: 10px 20px;
-    cursor: pointer;
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
   }
 </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div id="messageBox"></div>
 
-<div id="scanBox"></div>
-
+<a id="aboutBtn" href="about.html">About</a>
 <button id="scanButton">Start Virus Scan</button>
 <button id="colorButton">Change Color</button>
-<button id="aboutButton">About</button>
 
-<!-- About Popup -->
-<div id="aboutOverlay">
-  <div id="aboutContent">
-    <h2>About AccessDenied</h2>
-    <p>This creepy matrix rain website shows hacker messages, a fake virus scan, and a shutdown screen — perfect for trolling your friends! 😈</p>
-    <img src="https://c.tenor.com/qTU_8jv-78sAAAAC/catjam-cat-jam.gif" alt="Catjam Meme" />
-    <br />
-    <button id="aboutClose">Close</button>
-  </div>
-</div>
+<canvas id="matrix"></canvas>
+<div id="messageBox"></div>
+<div id="scanBox"></div>
+<div id="heartMonitor">❤️ LIVE MONITORING...<br>Heart rate: 72 BPM<br>STABLE</div>
 
 <script>
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
 const fontSize = 16;
 const columns = Math.floor(canvas.width / fontSize);
+
 const drops = [];
 for (let x = 0; x < columns; x++) drops[x] = 1;
 
-let currentColor = '#0f0'; // start green
-const colors = ['#0f0', 'red', 'yellow', 'cyan', 'magenta', 'white'];
+const colors = ['#00FF00', '#FF0000', '#FFFF00', '#00FFFF', '#800080'];
+let colorIndex = 0;
 
 function draw() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillStyle = 'rgba(0, 17, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = currentColor;
+  ctx.fillStyle = colors[colorIndex];
   ctx.font = fontSize + 'px monospace';
   for (let i = 0; i < drops.length; i++) {
     const text = letters.charAt(Math.floor(Math.random() * letters.length));
@@ -169,7 +139,6 @@ function draw() {
 }
 setInterval(draw, 50);
 
-// Creepy hacker messages
 const messages = [
   'Look behind you',
   'You are reported by the FBI',
@@ -187,6 +156,130 @@ const messages = [
   'USER AUTHENTICATION FAILED',
   'PASSWORD CRACKED',
 ];
+
 const messageBox = document.getElementById('messageBox');
 let msgIndex = 0;
-const typing
+const typingSpeed = 100;
+function typeMessage(message, callback) {
+  let i = 0;
+  messageBox.textContent = '';
+  function typing() {
+    if (i < message.length) {
+      messageBox.textContent += message.charAt(i++);
+      setTimeout(typing, typingSpeed);
+    } else if (callback) callback();
+  }
+  typing();
+}
+function showNextMessage() {
+  typeMessage(messages[msgIndex], () => {
+    setTimeout(() => {
+      msgIndex = (msgIndex + 1) % messages.length;
+      showNextMessage();
+    }, 7000);
+  });
+}
+showNextMessage();
+
+// Elements
+const aboutBtn = document.getElementById('aboutBtn');
+const colorButton = document.getElementById('colorButton');
+const scanButton = document.getElementById('scanButton');
+const scanBox = document.getElementById('scanBox');
+const heartMonitor = document.getElementById('heartMonitor');
+
+// Color cycling
+colorButton.addEventListener('click', () => {
+  colorIndex = (colorIndex + 1) % colors.length;
+  document.body.style.color = colors[colorIndex];
+  [messageBox, colorButton, scanButton, aboutBtn, scanBox].forEach(el => {
+    el.style.color = colors[colorIndex];
+    el.style.borderColor = colors[colorIndex];
+  });
+});
+
+// Scan simulation
+const scanMessages = [
+  "Initializing virus scan...",
+  "Scanning system files...",
+  "Scanning registry...",
+  "Checking network connections...",
+  "Detecting malware signatures...",
+  "Analyzing physical vitals...",
+  "Heart rate stable...",
+  "Resuming malware detection...",
+  "System compromised! 💀"
+];
+
+scanButton.addEventListener('click', () => {
+  scanButton.disabled = true;
+  scanBox.style.display = 'block';
+  let index = 0;
+  scanBox.textContent = '';
+  const interval = setInterval(() => {
+    if (index < scanMessages.length) {
+      scanBox.textContent += scanMessages[index] + "\n";
+      scanBox.scrollTop = scanBox.scrollHeight;
+
+      // Show heart monitor at step 5
+      if (index === 5) {
+        heartMonitor.style.display = 'block';
+      }
+      // Hide heart monitor after 3 seconds
+      if (index === 7) {
+        heartMonitor.style.display = 'none';
+      }
+
+      index++;
+    } else {
+      clearInterval(interval);
+      setTimeout(showShutdownScreen, 2000);
+    }
+  }, 1500);
+});
+
+// Fake shutdown screen
+function showShutdownScreen() {
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'black';
+  overlay.style.color = 'white';
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+  overlay.style.justifyContent = 'center';
+  overlay.style.alignItems = 'center';
+  overlay.style.zIndex = 99999;
+  overlay.style.fontFamily = 'Segoe UI, sans-serif';
+  overlay.innerHTML = `
+    <div style="font-size: 48px; margin-bottom: 20px;">Shutting down your PC...</div>
+    <div class="spinner"></div>
+    <style>
+      .spinner {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  `;
+  document.body.appendChild(overlay);
+}
+
+// Responsive canvas
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
