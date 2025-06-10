@@ -1,0 +1,253 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Creepy Matrix Rain</title>
+  <style>
+    body {
+      margin: 0;
+      background: #001100;
+      overflow: hidden;
+      color: #00FF00;
+      font-family: monospace;
+    }
+    canvas {
+      display: block;
+    }
+    .ui {
+      color: #00FF00;
+      border-color: #00FF00;
+    }
+    #messageBox {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 15px;
+      border: 1px solid currentColor;
+      font-size: 14px;
+      max-width: 300px;
+      min-height: 30px;
+      white-space: nowrap;
+    }
+    a#aboutBtn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 10;
+    }
+    #colorButton, #scanButton, #bonusButton {
+      position: fixed;
+      top: 10px;
+      background: transparent;
+      border: 1px solid currentColor;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 10;
+      user-select: none;
+    }
+    #colorButton:hover, #scanButton:hover, #bonusButton:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    #scanButton {
+      right: 130px;
+    }
+    #colorButton {
+      right: 10px;
+    }
+    #bonusButton {
+      right: 250px;
+    }
+    #bonusBox {
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      background: rgba(0,0,0,0.9);
+      border: 1px solid currentColor;
+      padding: 10px;
+      z-index: 9999;
+      display: none;
+    }
+    #bonusBox button {
+      display: block;
+      margin: 5px 0;
+      padding: 5px;
+      background: transparent;
+      border: 1px solid currentColor;
+      color: currentColor;
+      cursor: pointer;
+    }
+    #summonEntity {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: red;
+      font-size: 48px;
+      display: none;
+      z-index: 9999;
+    }
+    #hackTerminal {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      background: black;
+      color: green;
+      font-family: monospace;
+      border-top: 2px solid green;
+      display: none;
+      z-index: 9999;
+      padding: 10px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <a id="aboutBtn" href="about.html" class="ui">About</a>
+  <button id="scanButton" class="ui">Start Virus Scan</button>
+  <button id="colorButton" class="ui">Change Color</button>
+  <button id="bonusButton" class="ui">Bonus</button><canvas id="matrix"></canvas>
+
+  <div id="messageBox" class="ui"></div>
+  <div id="scanBox" class="ui"></div>
+  <div id="heartMonitor" class="ui">❤️ LIVE MONITORING...<br>Heart rate: 72 BPM<br>STABLE</div>
+  <div id="easterEggBox">
+    <p>Do you believe in the magic of rainbow fonts?</p>
+    <button onclick="revealMagicFont()">I don't know</button>
+    <button onclick="revealMagicFont()">Yes</button>
+    <br><br>
+    <button onclick="activateRainbow()">🌈 The Magic Rainbow Font</button>
+  </div>
+  <div id="bonusBox" class="ui">
+    <button onclick="toggleTerminal()">Hack Terminal</button>
+    <button onclick="summonEntity()">Summon Entity</button>
+  </div>
+  <div id="summonEntity">👤</div>
+  <div id="hackTerminal">>
+  </div>  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    const rainbowColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'white', 'brown', 'black'];
+    let useRainbowFont = false;
+    let matrixColor = '#00FF00';
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 17, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const char = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillStyle = useRainbowFont ? rainbowColors[Math.floor(Math.random() * rainbowColors.length)] : matrixColor;
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 50);
+
+    const messageBox = document.getElementById('messageBox');
+    const messages = [
+      'Look behind you', 'You are reported by the FBI', 'A hacker has got in your computer and hacked it.',
+      'ACCESS GRANTED', 'ACCESS DENIED', 'INTRUSION DETECTED', 'SECURITY BREACH', 'SYSTEM OVERRIDE',
+      'ENCRYPTION BYPASSED', 'MALWARE INSTALLED', 'ROOT ACCESS ACQUIRED', 'FIREWALL DISABLED',
+      'DATA EXFILTRATION IN PROGRESS', 'USER AUTHENTICATION FAILED', 'PASSWORD CRACKED'
+    ];
+    let msgIndex = 0;
+    function typeCreepyMessage(msg, i = 0) {
+      if (i < msg.length) {
+        messageBox.textContent += msg.charAt(i);
+        setTimeout(() => typeCreepyMessage(msg, i + 1), 75);
+      } else {
+        setTimeout(() => {
+          msgIndex = (msgIndex + 1) % messages.length;
+          messageBox.textContent = '';
+          typeCreepyMessage(messages[msgIndex]);
+        }, 5000);
+      }
+    }
+    typeCreepyMessage(messages[msgIndex]);
+
+    const colorButton = document.getElementById('colorButton');
+    const uiElements = document.querySelectorAll('.ui');
+    const colors = ['#00FF00', '#FF0000', '#00FFFF', '#FFFF00', '#FFFFFF'];
+    let colorIndex = 0;
+    colorButton.onclick = () => {
+      colorIndex = (colorIndex + 1) % colors.length;
+      matrixColor = colors[colorIndex];
+      uiElements.forEach(el => {
+        el.style.color = matrixColor;
+        el.style.borderColor = matrixColor;
+      });
+    };
+
+    const scanButton = document.getElementById('scanButton');
+    const scanBox = document.getElementById('scanBox');
+    const heartMonitor = document.getElementById('heartMonitor');
+    scanButton.onclick = () => {
+      scanButton.disabled = true;
+      scanBox.style.display = 'block';
+      const scanSteps = [
+        "Initializing virus scan...", "Scanning system files...", "Scanning registry...",
+        "Checking network connections...", "Detecting malware signatures...", "Analyzing physical vitals...",
+        "Heart rate stable...", "Resuming malware detection...", "System compromised! 💀"
+      ];
+      let i = 0;
+      const scanInterval = setInterval(() => {
+        scanBox.textContent += scanSteps[i] + '\n';
+        scanBox.scrollTop = scanBox.scrollHeight;
+        if (i === 5) heartMonitor.style.display = 'block';
+        if (i === 7) heartMonitor.style.display = 'none';
+        i++;
+        if (i >= scanSteps.length) {
+          clearInterval(scanInterval);
+          triggerRainbowEasterEgg();
+        }
+      }, 1200);
+    };
+
+    const easterEggBox = document.getElementById('easterEggBox');
+    function triggerRainbowEasterEgg() {
+      setTimeout(() => {
+        easterEggBox.style.display = 'block';
+      }, 20000);
+    }
+    function revealMagicFont() {
+      document.querySelector('#easterEggBox p').textContent = 'Then click...';
+    }
+    function activateRainbow() {
+      useRainbowFont = true;
+      easterEggBox.style.display = 'none';
+    }
+
+    // Bonus Button Logic
+    const bonusButton = document.getElementById('bonusButton');
+    const bonusBox = document.getElementById('bonusBox');
+    bonusButton.onclick = () => {
+      bonusBox.style.display = bonusBox.style.display === 'block' ? 'none' : 'block';
+    };
+
+    function summonEntity() {
+      const entity = document.getElementById('summonEntity');
+      entity.style.display = 'block';
+      setTimeout(() => {
+        entity.style.display = 'none';
+      }, 3000);
+    }
+
+    function toggleTerminal() {
+      const terminal = document.getElementById('hackTerminal');
+      terminal.style.display = terminal.style.display === 'block' ? 'none' : 'block';
+    }
+  </script></body>
+</html>
