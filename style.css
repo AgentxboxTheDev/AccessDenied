@@ -1,0 +1,283 @@
+/* --- Base styles --- */
+body {
+  margin: 0;
+  background: #001100;
+  overflow: hidden;
+  color: #00FF00;
+  font-family: monospace;
+}
+canvas {
+  display: block;
+}
+
+/* --- UI Elements --- */
+.ui {
+  color: #00FF00;
+  border-color: #00FF00;
+}
+
+/* Message box */
+#messageBox {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 15px;
+  border: 1px solid currentColor;
+  font-size: 14px;
+  max-width: 300px;
+  min-height: 30px;
+  white-space: nowrap;
+  z-index: 999;
+}
+
+/* Buttons: About, Scan, Color, Bonus */
+#aboutBtn, #colorButton, #scanButton, #bonusButton {
+  position: fixed;
+  top: 10px;
+  background: transparent;
+  border: 1px solid currentColor;
+  padding: 5px 10px;
+  cursor: pointer;
+  z-index: 1000;
+  user-select: none;
+}
+#aboutBtn {
+  left: 10px;
+  font-weight: bold;
+}
+#bonusButton {
+  right: 250px;
+}
+#scanButton {
+  right: 130px;
+}
+#colorButton {
+  right: 10px;
+}
+#aboutBtn:hover, #colorButton:hover, #scanButton:hover, #bonusButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Scan box */
+#scanBox {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 300px;
+  height: 150px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid currentColor;
+  overflow-y: auto;
+  display: none;
+  white-space: pre-wrap;
+  z-index: 999;
+}
+
+/* Heart monitor */
+#heartMonitor {
+  position: fixed;
+  bottom: 240px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 10px;
+  border: 1px solid currentColor;
+  display: none;
+  z-index: 999;
+}
+
+/* Easter Egg box */
+#easterEggBox {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid currentColor;
+  padding: 10px;
+  display: none;
+  color: #00FF00;
+  z-index: 9999;
+}
+
+/* Bonus box */
+#bonusBox {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid currentColor;
+  padding: 10px;
+  z-index: 9999;
+  display: none;
+}
+#bonusBox button {
+  display: block;
+  margin: 5px 0;
+  padding: 5px;
+  background: transparent;
+  border: 1px solid currentColor;
+  color: currentColor;
+  cursor: pointer;
+}
+
+/* Summon entity */
+#summonEntity {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+  font-size: 48px;
+  display: none;
+  z-index: 9999;
+}
+
+/* Hack terminal */
+#hackTerminal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: black;
+  color: #00FF00;
+  font-family: monospace;
+  border-top: 2px solid #00FF00;
+  display: none;
+  z-index: 9999;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* --- Taskbar styles --- */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 36px;
+  background: #002200;
+  border-top: 2px solid #00FF00;
+  display: flex;
+  align-items: center;
+  font-family: monospace;
+  font-size: 14px;
+  color: #00FF00;
+  user-select: none;
+  z-index: 10000;
+}
+
+/* Start button */
+#startBtn {
+  background: #004400;
+  border: 1px solid #00FF00;
+  color: #00FF00;
+  padding: 5px 12px;
+  cursor: pointer;
+  margin-left: 5px;
+  font-weight: bold;
+}
+#startBtn:hover {
+  background: #00AA00;
+  color: black;
+}
+
+/* Task icons container */
+#taskIcons {
+  display: flex;
+  gap: 10px;
+  margin-left: 15px;
+  flex-grow: 1;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #00FF00 transparent;
+}
+
+/* Task icon style */
+.task-icon {
+  background: #003300;
+  border: 1px solid #00FF00;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+  box-shadow: 0 0 5px #00FF00;
+  transition: background 0.2s;
+}
+.task-icon:hover {
+  background: #007700;
+  color: black;
+  box-shadow: 0 0 8px #00FF00;
+}
+
+/* System tray */
+#systemTray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 10px;
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Lock icon */
+#lockIcon {
+  color: #00FF00;
+  user-select: none;
+}
+
+/* Fake clock */
+#fakeClock {
+  font-family: monospace;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+/* Scrollbar for taskIcons */
+#taskIcons::-webkit-scrollbar {
+  height: 6px;
+}
+#taskIcons::-webkit-scrollbar-thumb {
+  background: #00FF00;
+  border-radius: 3px;
+}
+
+#bootScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: white;
+  font-family: monospace;
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+#bootText {
+  margin-bottom: 20px;
+}
+
+#loader {
+  border: 6px solid #444;
+  border-top: 6px solid white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
