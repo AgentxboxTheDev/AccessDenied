@@ -23,7 +23,5 @@ Warning:
 This project is for educational and prank purposes only. Don't use it for malicious activities.
 
 Files:
-index.html — main prank code
-README.md — this file
 
 This website will get more updates soon! 
